@@ -3,7 +3,7 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$database = "mananggit";
+$database = "marinas-tiempo";
 
 $conn = new mysqli($servername, $username, $password, $database);
 
