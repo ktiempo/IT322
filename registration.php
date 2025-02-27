@@ -37,7 +37,7 @@
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
 </head>
-
+<?php session_start(); ?>
 <body>
 
   <main>
@@ -57,71 +57,76 @@
                     <p class="text-center small">Enter your personal details to create account</p>
                   </div>
 
-                  <form class="row g-3 needs-validation" action="./controller//registration.php" method="POST" novalidate>
+                  <form class="row g-3 needs-validation" action="./controller/registration.php" method="POST" novalidate>
 
-                  <form class="row g-3 needs-validation" novalidate>
                     <div class="col-12">
-                      <label for="yourfirstName" class="form-label">First Name</label>
-                      <input type="text" name="name" class="form-control" id="yourName" required>
-                      <div class="invalid-feedback">Please, enter your First Name!</div>
+                      <label for="yourName" class="form-label">First Name</label>
+                      <input type="text" name="firstName" class="form-control" id="yourName" required>
+                      <div class="invalid-feedback">Please, enter your first name!</div>
                     </div>
 
                     <div class="col-12">
-                      <label for="yourlastName" class="form-label">Last Name</label>
-                      <input type="email" name="email" class="form-control" id="yourEmail" required>
-                      <div class="invalid-feedback">Please, enter your Last Name!</div>
+                      <label for="yourName" class="form-label">Last Name </label>
+                      <input type="text" name="lastName" class="form-control" id="yourEmail" required>
+                      <div class="invalid-feedback">Please enter your last name!</div>
                     </div>
 
                     <div class="col-12">
-                      <label for="youremail" class="form-label">Email</label>
+                      <label for="yourEmail" class="form-label">Email Address </label>
                       <div class="input-group has-validation">
-                        <input type="text" name="username" class="form-control" id="yourUsername" required>
-                        <div class="invalid-feedback">Please enter a valid Email adddress!</div>
+                        <input type="email" name="email" class="form-control" id="yourUsername" required>
+                        <div class="invalid-feedback">Please choose a email address!</div>
                       </div>
                     </div>
 
                     <div class="col-12">
-                      <label for="yourPassword" class="form-label">Password</label>
+                      <label for="yourpassword" class="form-label">Password</label>
                       <input type="password" name="password" class="form-control" id="yourPassword" required>
                       <div class="invalid-feedback">Please enter your password!</div>
                     </div>
 
                     <div class="col-12">
-                      <label for="yourPassword" class="form-label">Confirm Password</label>
+                      <label for="yourcpassword" class="form-label">Confirm Password</label>
                       <input type="password" name="cpassword" class="form-control" id="yourPassword" required>
-                      <div class="invalid-feedback">Please confirm your password</div>
+                      <div class="invalid-feedback">Please confirm your password!</div>
                     </div>
+
 
                     <div class="col-12">
                       <label for="yourphoneNumber" class="form-label">Phone Number</label>
-                      <input type="text" name="name" class="form-control" id="yourName" required>
-                      <div class="invalid-feedback">Please enter your phone number</div>
+                      <div class="input-group has-validation">
+                        <input type="text" name="phoneNumber" class="form-control" id="yourUsername" 
+                              pattern="09[0-9]{9}" minlength="11" maxlength="11" required>
+                        <div class="invalid-feedback">Please enter a valid 11-digit phone number!</div>
+                      </div>
                     </div>
 
-                    <div class="col-12">
-                        <div class="row mb-3">
-                            <label class="col-lg-3 col-form-label">Gender</label>
-                            <div class="col-lg-9">
-                                <select class="form-select" aria-label="Default select example">
-                                <option selected disabled>Select Gender</option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                                </select>
-                            </div>
+                    
+                    <div class = "col-12">
+                      <div class="row mb-3">
+                        <label class="col-lg-3 col-form-label">Gender</label>
+                        <div class="col-lg-9">
+                          <select class="form-select" name="gender" aria-label="Default select example" required>>
+                            <option selected disabled>Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                          </select>
                         </div>
+                      </div>
                     </div>
 
                     <div class = "col-12">
-                        <div class="row mb-3">
-                        <label for=inputdata class="col-sm-3 col-form-label">Birthday </label>
-                        <div class = "col-lg-9">
-                            <input type = "date" class = "form-control" required>
-                        </div>
-                        </div>
+                      <div class="row mb-3">
+                      <label for="inputDate" class="col-sm-3 col-form-label">Birthday </label>
+                      <div class = "col-lg-9">
+                        <input type = "date" class = "form-control" name="birthday" required>
+                      </div>
+                      </div>
                     </div>
+                    
 
-                    <div class="col-12">      
-                      <button class="btn btn-primary w-100" type="submit" name=registration>Create Account</button>
+                    <div class="col-12">
+                      <button class="btn btn-primary w-100" type="submit" name="registration">Create Account</button>
                     </div>
                     <div class="col-12">
                       <p class="small mb-0">Already have an account? <a href="./login.php">Log in</a></p>
@@ -131,19 +136,10 @@
                 </div>
               </div>
 
-              <div class="credits">
-                <!-- All the links in the footer should remain intact. -->
-                <!-- You can delete the links only if you purchased the pro version. -->
-                <!-- Licensing information: https://bootstrapmade.com/license/ -->
-                <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ --> 
-              </div>
-
             </div>
           </div>
         </div>
-
       </section>
-
     </div>
   </main><!-- End #main -->
 
@@ -158,7 +154,33 @@
   <script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
   <script src="assets/vendor/tinymce/tinymce.min.js"></script>
   <script src="assets/vendor/php-email-form/validate.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+  <?php
+  if(isset($_SESSION['message']) && $_SESSION['code'] !='') {
+      ?>
+      <script>
+        const Toast = Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+          }
+        });
+        Toast.fire({
+          icon: "<?php echo $_SESSION['code']; ?>",
+          title: "<?php echo $_SESSION['message']; ?>"
+        });
+      </script>
+      <?php
+      unset($_SESSION['message']);
+      unset($_SESSION['code']);
+  }     
+?>
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
 
