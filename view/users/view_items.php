@@ -23,6 +23,7 @@ include("./includes/sidebar.php");
 
             <div class="container mt-5 mb-0 px-0">
                 <h2 class="mb-4">Inventory Items</h2>
+
                 <div class="card">
                     <div class="card-body">
                         <table class="table table-bordered table-striped">

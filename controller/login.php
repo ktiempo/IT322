@@ -16,8 +16,7 @@ if(isset($_POST["login"])) {
         if(mysqli_num_rows($query_run) > 0) {
             $data = mysqli_fetch_assoc($query_run);
 
-
-            $userID = $data["userId"];
+            $userId = $data["userId"];
             $fullname = $data["firstName"]." ".$data["lastName"];
             $emailAddress = $data["email"];
             $userRole = $data["role"];
@@ -33,7 +32,8 @@ if(isset($_POST["login"])) {
             if($userRole == 'admin'){
                 header("Location: ../view/admin/index.php");
             } else if ($userRole == "user"){
-                header("Location: ../view/users/index.php");
+                // Redirect user to the landing page with Hot Wheels pictures
+                header("Location: ../view/users/homepage.php");
             } else {
                 $_SESSION['message'] = "Invalid Credentials";
                 $_SESSION["code"] = "error";
@@ -53,7 +53,5 @@ if(isset($_POST["login"])) {
         header("Location: ../login.php");
         exit();
     } 
-    
 }
-
 ?>
