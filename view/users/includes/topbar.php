@@ -31,7 +31,7 @@
           <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
             <i class="bi bi-bell"></i>
             <span class="badge bg-primary badge-number">4</span>
-          </a><!-- End Notification Icon -->
+          </a><!-- End Notif ication Icon -->
 
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
             <li class="dropdown-header">
@@ -184,7 +184,7 @@
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
+              <a class="dropdown-item d-flex align-items-center" href="/view/users/user_profile.php">
                 <i class="bi bi-person"></i>
                 <span>My Profile</span>
               </a>
@@ -214,11 +214,12 @@
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="../view/users/logout.php">
-                <i class="bi bi-box-arrow-right"></i>
-                <span>Sign Out</span>
+              <a class="dropdown-item d-flex align-items-center" href="http://localhost/IT322/view/users/logout.php">
+                  <i class="bi bi-box-arrow-right"></i>
+                  <span>Sign Out</span>
               </a>
-            </li>
+          </li>
+
 
           </ul><!-- End Profile Dropdown Items -->
         </li><!-- End Profile Nav -->
