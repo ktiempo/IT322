@@ -184,7 +184,7 @@
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="/view/users/user_profile.php">
+              <a class="dropdown-item d-flex align-items-center" href="user_profile.php">
                 <i class="bi bi-person"></i>
                 <span>My Profile</span>
               </a>
