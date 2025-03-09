@@ -1,5 +1,5 @@
 <?php
-include("../../../dB/config.php");
+include("../../dB/config.php");
 
 if (isset($_GET['id'])) {
     $id = intval($_GET['id']);

@@ -1,11 +1,62 @@
-<!-- ======= Admin Sidebar ======= -->
+<head>
+  <style>
+    /* Default Sidebar Styles */
+    .sidebar {
+      background-color: #4251AE;
+      color: white;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    /* Sidebar in Dark Mode */
+    .sidebar.dark-mode {
+      background-color: #1E1E1E;
+      color: #F1D74D;
+    }
+
+    /* Sidebar Navigation */
+    .sidebar-nav .nav-item {
+      background-color: #F1D74D;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+
+    .sidebar-nav .nav-item a {
+      text-decoration: none;
+      color: black;
+      display: block;
+    }
+
+    /* Dark Mode Sidebar Links */
+    .sidebar.dark-mode .nav-item {
+      background-color: #333;
+    }
+
+    .sidebar.dark-mode .nav-item a {
+      color: #F1D74D;
+    }
+
+    /* Dark Mode Toggle Button */
+    .dark-mode-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      background: #F1D74D;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
 <aside id="sidebar" class="sidebar">
 
   <ul class="sidebar-nav" id="sidebar-nav">
 
     <!-- Dashboard -->
     <li class="nav-item">
-      <a class="nav-link" href="../../view/admin/dashboard/dashboard.php">
+      <a class="nav-link" href="../../view/admin/index.php">
         <i class="bi bi-grid"></i>
         <span>Dashboard</span>
       </a>
@@ -13,15 +64,18 @@
 
     <!-- Inventory -->
     <li class="nav-item">
-      <a class="nav-link collapsed" data-bs-target="#inventory-nav" data-bs-toggle="collapse" href="#">
-        <i class="bi bi-box"></i><span>Inventory</span><i class="bi bi-chevron-down ms-auto"></i>
+      <a class="nav-link collapsed" data-bs-target="#inventory-nav" data-bs-toggle="collapse" href="#" 
+        aria-expanded="false">
+          <i class="bi bi-box"></i>
+          <span>Inventory</span>
+          <i class="bi bi-chevron-down ms-auto toggle-icon"></i> 
       </a>
       <ul id="inventory-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
-        <li><a href="../../view/admin/inventory/inventory-view.php"><i class="bi bi-circle"></i><span>View All Items</span></a></li>
-        <li><a href="../../view/admin/inventory/inventory-add.php"><i class="bi bi-circle"></i><span>Add New Item</span></a></li>
-        <li><a href="inventory-stock-logs.html"><i class="bi bi-circle"></i><span>Stock Logs</span></a></li>
+          <li><a href="../../view/admin/inventory-view.php"><i class="bi bi-circle"></i><span>View All Items</span></a></li>
+          <li><a href="../../view/admin/inventory-add.php"><i class="bi bi-circle"></i><span>Add New Item</span></a></li>
       </ul>
-    </li><!-- End Inventory -->
+    </li>
+
 
     <!-- Orders -->
     <li class="nav-item">
@@ -33,7 +87,7 @@
 
     <!-- Users -->
     <li class="nav-item">
-      <a class="nav-link collapsed" href="users.html">
+      <a class="nav-link collapsed" href="../../view/admin/user.php">
         <i class="bi bi-people"></i>
         <span>Users</span>
       </a>
