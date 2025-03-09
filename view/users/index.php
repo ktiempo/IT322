@@ -4,7 +4,8 @@ include("./includes/topbar.php");
 include("./includes/sidebar.php");
 ?>
 
-
+<main id="main" class="main">
+</main>
 
 
 
