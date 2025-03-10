@@ -93,7 +93,7 @@ $loggedInUser = isset($_SESSION["authUser"]["fullName"])
                     <li><hr class="dropdown-divider"></li>
 
                     <li>
-                        <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
+                        <a class="dropdown-item d-flex align-items-center" href="settings.php">
                             <i class="bi bi-gear"></i>
                             <span>Settings</span>
                         </a>
