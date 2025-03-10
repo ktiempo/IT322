@@ -19,6 +19,33 @@ body {
   color: #444444;
 }
 
+
+
+/* Dark Mode */
+.dark-mode {
+  background-color: #121212;
+  color: #ffffff;
+}
+
+.dark-mode .settings-container {
+  background-color: #222;
+  color: #ffffff;
+}
+
+.dark-mode .btn {
+  border: 1px solid #ffffff;
+}
+
+.dark-mode .btn-dark {
+  background-color: #333;
+}
+
+.dark-mode .modal-content {
+  background-color: #222;
+  color: #ffffff;
+}
+
+
 a {
   color: #4154f1;
   text-decoration: none;

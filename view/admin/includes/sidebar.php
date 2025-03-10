@@ -2,7 +2,7 @@
   <style>
     /* Default Sidebar Styles */
     .sidebar {
-      background-color: #4251AE;
+      background-color: #0074E4;
       color: white;
       transition: background 0.3s, color 0.3s;
     }
@@ -10,12 +10,12 @@
     /* Sidebar in Dark Mode */
     .sidebar.dark-mode {
       background-color: #1E1E1E;
-      color: #F1D74D;
+      color: #D95A00;
     }
 
     /* Sidebar Navigation */
     .sidebar-nav .nav-item {
-      background-color: #F1D74D;
+      background-color: #D95A00;
       padding: 10px;
       border-radius: 5px;
       margin-bottom: 10px;
@@ -33,7 +33,7 @@
     }
 
     .sidebar.dark-mode .nav-item a {
-      color: #F1D74D;
+      color: #D95A00;
     }
 
     /* Dark Mode Toggle Button */
@@ -44,7 +44,7 @@
       padding: 10px;
       cursor: pointer;
       font-weight: bold;
-      background: #F1D74D;
+      background: #D95A00;
       border-radius: 5px;
       margin-bottom: 10px;
     }
@@ -79,7 +79,7 @@
 
     <!-- Orders -->
     <li class="nav-item">
-      <a class="nav-link collapsed" href="orders.html">
+      <a class="nav-link collapsed" href="../../view/admin/orders.php">
         <i class="bi bi-cart"></i>
         <span>Orders</span>
       </a>

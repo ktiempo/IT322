@@ -84,6 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <?php endif; ?>
 
                 <form method="POST" action="">
+                <h2>Add New Hot Wheels Car</h2>
                     <div class="mb-3">
                         <label class="form-label">Car Name:</label>
                         <input type="text" name="car_name" class="form-control" required>

@@ -9,6 +9,16 @@ $totalStockQuery = "SELECT SUM(stock_quantity) AS total_stock FROM inventory";
 $totalStockResult = $conn->query($totalStockQuery);
 $totalStock = $totalStockResult->fetch_assoc()['total_stock'];
 
+// Total Users
+$totalUsersQuery = "SELECT COUNT(*) AS total_users FROM users";
+$totalUsersResult = $conn->query($totalUsersQuery);
+$totalUsers = $totalUsersResult->fetch_assoc()['total_users'];
+
+// Total Pending Orders
+$pendingOrdersQuery = "SELECT COUNT(*) AS pending_orders FROM orders WHERE status = 'pending'";
+$pendingOrdersResult = $conn->query($pendingOrdersQuery);
+$pendingOrders = $pendingOrdersResult->fetch_assoc()['pending_orders'];
+
 // Most Recent Update (Latest Action)
 $recentActivityQuery = "SELECT car_name, stock_quantity, created_at FROM inventory ORDER BY created_at DESC LIMIT 1";
 $recentActivityResult = $conn->query($recentActivityQuery);
@@ -46,6 +56,20 @@ $inventorySummaryResult = $conn->query($inventorySummaryQuery);
                 </div>
                 <div class="col-md-3">
                     <div class="card p-3 text-center shadow">
+                        <h5>Total Users</h5>
+                        <h3 class="text-success"><?php echo $totalUsers; ?></h3>
+                        <p>Registered Users</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card p-3 text-center shadow">
+                        <h5>Pending Orders</h5>
+                        <h3 class="text-danger"><?php echo $pendingOrders; ?></h3>
+                        <p>Orders awaiting approval</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card p-3 text-center shadow">
                         <h5>Latest Update</h5>
                         <?php if ($recentActivity): ?>
                             <h3><?php echo $recentActivity['car_name']; ?></h3>
@@ -55,8 +79,11 @@ $inventorySummaryResult = $conn->query($inventorySummaryQuery);
                         <?php endif; ?>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="card p-3 text-center shadow">
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="card p-3 shadow">
                         <h5>Low Stock Items</h5>
                         <ul>
                             <?php if ($lowStockResult->num_rows > 0): ?>
@@ -69,26 +96,29 @@ $inventorySummaryResult = $conn->query($inventorySummaryQuery);
                         </ul>
                     </div>
                 </div>
-            </div>
-
-            <div class="row mt-4">
                 <div class="col-md-6">
                     <div class="card p-3 shadow">
                         <h5>Inventory Summary by Model Count</h5>
                         <ul>
-                            <?php while ($row = $inventorySummaryResult->fetch_assoc()): ?>
+                            <?php 
+                            $inventorySummaryResult->data_seek(0); // Reset pointer before fetching again
+                            while ($row = $inventorySummaryResult->fetch_assoc()): ?>
                                 <li><?php echo $row['series'] . " - <span class='text-info'>" . $row['total_models'] . " models</span>"; ?></li>
                             <?php endwhile; ?>
                         </ul>
                     </div>
                 </div>
-                <div class="col-md-6">
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-12">
                     <div class="card p-3 shadow">
                         <h5>Inventory Stock Distribution</h5>
                         <canvas id="inventoryChart"></canvas>
                     </div>
                 </div>
             </div>
+
         </div>
     </section>
 </main>
@@ -130,7 +160,6 @@ $inventorySummaryResult = $conn->query($inventorySummaryQuery);
         });
     });
 </script>
-
 
 <?php $conn->close(); ?>
 <?php
