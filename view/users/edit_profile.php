@@ -17,7 +17,8 @@ if (isset($_POST["updateProfile"])) {
     $lastName = $_POST["lastName"];
     $email = $_POST["email"];
     $phoneNumber = $_POST["phoneNumber"];
-    
+    $profilePicture = $user["profilePicture"]; // Default to current profile picture
+
     // Handle Profile Picture Upload
     if (!empty($_FILES["profilePicture"]["name"])) {
         $targetDir = "../../assets/img/";
@@ -30,15 +31,20 @@ if (isset($_POST["updateProfile"])) {
         if (in_array(strtolower($fileType), $allowedTypes)) {
             if (move_uploaded_file($_FILES["profilePicture"]["tmp_name"], $targetFilePath)) {
                 $profilePicture = $fileName;
-                $updateQuery = "UPDATE users SET profilePicture='$profilePicture' WHERE userId='$userId'";
-                mysqli_query($conn, $updateQuery);
+                $updateProfilePicQuery = "UPDATE users SET profilePicture='$profilePicture' WHERE userId='$userId'";
+                mysqli_query($conn, $updateProfilePicQuery);
             }
         }
     }
 
-    // Update other profile details
+    // Update user details
     $updateQuery = "UPDATE users SET firstName='$firstName', lastName='$lastName', email='$email', phoneNumber='$phoneNumber' WHERE userId='$userId'";
     if (mysqli_query($conn, $updateQuery)) {
+        // ✅ Update session data after saving changes
+        $_SESSION["authUser"]["fullName"] = $firstName . " " . $lastName;
+        $_SESSION["authUser"]["emailAddress"] = $email;
+        $_SESSION["authUser"]["profilePicture"] = $profilePicture; // Update session profile picture
+
         $_SESSION["message"] = "Profile updated successfully!";
     } else {
         $_SESSION["message"] = "Error updating profile.";
