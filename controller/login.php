@@ -7,7 +7,7 @@ if(isset($_POST["login"])) {
     $email = $_POST["email"];
     $password = $_POST["password"];
 
-    $query = "SELECT userId, firstName, lastName, email, password, phoneNumber, gender, birthday, verification, role 
+    $query = "SELECT userId, firstName, lastName, email, password, phoneNumber, gender, birthday, verification, role, profilePicture 
     FROM users WHERE email = '$email' AND password = '$password' LIMIT 1;";
 
     $query_run = mysqli_query($conn, $query);
@@ -20,6 +20,7 @@ if(isset($_POST["login"])) {
             $fullname = $data["firstName"]." ".$data["lastName"];
             $emailAddress = $data["email"];
             $userRole = $data["role"];
+            $profilePicture = !empty($data["profilePicture"]) ? $data["profilePicture"] : "default.png"; // Set default if empty
 
             $_SESSION["auth"] = true;
             $_SESSION["role"] = $userRole;
@@ -27,6 +28,7 @@ if(isset($_POST["login"])) {
                 'userId' => $userId,
                 'fullName' => $fullname,
                 'emailAddress' => $emailAddress,
+                'profilePicture' => $profilePicture  // ✅ Add this line
             ];
 
             if($userRole == 'admin'){

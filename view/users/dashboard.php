@@ -18,7 +18,7 @@ include("./includes/sidebar.php");
     </div><!-- End Page Title -->
 
     <section class="dashboard">
-        <div class="row g-3">
+        <div class="container mt-4">
 
             <!-- Statistics Cards -->
             <div class="row mt-4">
