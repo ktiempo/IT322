@@ -21,7 +21,7 @@ $user = mysqli_fetch_assoc($result);
     <div class="card shadow-sm p-4 text-center">
         <!-- Profile Picture (Centered) -->
         <div class="d-flex justify-content-center">
-            <img src="../../assets/img/<?php echo !empty($user["profilePicture"]) ? $user["profilePicture"] : 'default.png'; ?>" 
+            <img src="../../assets/img/<?php echo !empty($user["profilePicture"]) ? $user["profilePicture"] : '../../assets/img/prof.jpg'; ?>" 
                  alt="Profile Picture" class="rounded-circle mb-3" width="150" height="150">
         </div>
 

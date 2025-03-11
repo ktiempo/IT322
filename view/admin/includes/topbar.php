@@ -16,7 +16,7 @@ $loggedInUser = isset($_SESSION["authUser"]["fullName"])
 
 $profilePicture = !empty($_SESSION["authUser"]["profilePicture"]) 
     ? "../../assets/img/" . $_SESSION["authUser"]["profilePicture"] 
-    : "../../assets/img/prof.jpg";
+    : "../../assets/img/default.png";
 
 ?>
 
@@ -24,7 +24,7 @@ $profilePicture = !empty($_SESSION["authUser"]["profilePicture"])
 <header id="header" class="header fixed-top d-flex align-items-center" style="background-color: #D95A00;">
 
     <div class="d-flex align-items-center justify-content-between">
-        <a href="homepage.php" class="logo d-flex align-items-center">
+        <a href="index.php" class="logo d-flex align-items-center">
             <img src="../../assets/img/car_logo2.png" alt="">
             <span class="d-none d-lg-block">Wheels Я Us</span>
         </a>
