@@ -2,20 +2,20 @@
   <style>
     /* Default Sidebar Styles */
     .sidebar {
-      background-color: #0074E4;
+      background-color: #00215E;
       color: white;
       transition: background 0.3s, color 0.3s;
     }
 
     /* Sidebar in Dark Mode */
     .sidebar.dark-mode {
-      background-color: #1E1E1E;
-      color: #D95A00;
+      background-color: #0A2A66; /* Adjusted to a shade of blue */
+      color: #F0DE36;
     }
 
     /* Sidebar Navigation */
     .sidebar-nav .nav-item {
-      background-color: #D95A00;
+      background-color: #F0DE36;
       padding: 10px;
       border-radius: 5px;
       margin-bottom: 10px;
@@ -33,10 +33,16 @@
     }
 
     .sidebar.dark-mode .nav-item a {
-      color: #D95A00;
+      color: black; /* Keep text color dark in dark mode */
     }
 
     /* Dark Mode Toggle Button */
+    .dark-mode-toggle-container {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+    }
+
     .dark-mode-toggle {
       display: flex;
       align-items: center;
@@ -44,55 +50,71 @@
       padding: 10px;
       cursor: pointer;
       font-weight: bold;
-      background: #D95A00;
+      background: #F0DE36;
       border-radius: 5px;
       margin-bottom: 10px;
+      border: none;
     }
   </style>
+  <!-- Import Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
-<aside id="sidebar" class="sidebar">
+<body>
+  <aside id="sidebar" class="sidebar">
+    <ul class="sidebar-nav" id="sidebar-nav">
+      <!-- Dashboard -->
+      <li class="nav-item">
+        <a class="nav-link" href="../../view/admin/dashboard.php">
+          <i class="bi bi-grid"></i>
+          <span>Dashboard</span>
+        </a>
+      </li><!-- End Dashboard -->
 
-  <ul class="sidebar-nav" id="sidebar-nav">
+      <!-- Inventory -->
+      <li class="nav-item">
+        <a class="nav-link" href="inventory.php">
+            <i class="material-icons">directions_car</i>
+            <span>Inventory Management</span>
+        </a>
+      </li><!-- End Inventory --> 
 
-    <!-- Dashboard -->
-    <li class="nav-item">
-      <a class="nav-link" href="../../view/admin/index.php">
-        <i class="bi bi-grid"></i>
-        <span>Dashboard</span>
-      </a>
-    </li><!-- End Dashboard -->
+      <!-- Orders -->
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="../../view/admin/orders.php">
+          <i class="bi bi-cart"></i>
+          <span>Orders</span>
+        </a>
+      </li><!-- End Orders -->
 
-    <!-- Inventory -->
-    <li class="nav-item">
-      <a class="nav-link collapsed" data-bs-target="#inventory-nav" data-bs-toggle="collapse" href="#" 
-        aria-expanded="false">
-          <i class="bi bi-box"></i>
-          <span>Inventory</span>
-          <i class="bi bi-chevron-down ms-auto toggle-icon"></i> 
-      </a>
-      <ul id="inventory-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
-          <li><a href="../../view/admin/inventory-view.php"><i class="bi bi-circle"></i><span>View All Items</span></a></li>
-          <li><a href="../../view/admin/inventory-add.php"><i class="bi bi-circle"></i><span>Add New Item</span></a></li>
-      </ul>
-    </li>
+      <!-- Users -->
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="../../view/admin/user.php">
+          <i class="bi bi-people"></i>
+          <span>Users</span>
+        </a>
+      </li><!-- End Users -->
+    </ul>
+    
+    <div class="dark-mode-toggle-container">
+      <button id="dark-mode-toggle" class="dark-mode-toggle">
+        <i class="bi bi-moon-fill"></i>
+      </button>
+    </div>
+  </aside><!-- End Admin Sidebar -->
+  
+  <script>
+    const toggle = document.getElementById('dark-mode-toggle');
+    const sidebar = document.getElementById('sidebar');
 
+    toggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      sidebar.classList.toggle('dark-mode');
+      localStorage.setItem('dark-mode', document.body.classList.contains('dark-mode'));
+    });
 
-    <!-- Orders -->
-    <li class="nav-item">
-      <a class="nav-link collapsed" href="../../view/admin/orders.php">
-        <i class="bi bi-cart"></i>
-        <span>Orders</span>
-      </a>
-    </li><!-- End Orders -->
-
-    <!-- Users -->
-    <li class="nav-item">
-      <a class="nav-link collapsed" href="../../view/admin/user.php">
-        <i class="bi bi-people"></i>
-        <span>Users</span>
-      </a>
-    </li><!-- End Users -->
-
-  </ul>
-
-</aside><!-- End Admin Sidebar -->
+    if (localStorage.getItem('dark-mode') === 'true') {
+      document.body.classList.add('dark-mode');
+      sidebar.classList.add('dark-mode');
+    }
+  </script>
+</body>

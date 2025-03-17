@@ -21,7 +21,8 @@ $profilePicture = !empty($_SESSION["authUser"]["profilePicture"])
 ?>
 
 <!-- ======= Header ======= -->
-<header id="header" class="header fixed-top d-flex align-items-center" style="background-color: #D95A00;">
+<header id="header" class="header fixed-top d-flex align-items-center" style="background-color: #F0DE36;">
+    
 
     <div class="d-flex align-items-center justify-content-between">
         <a href="index.php" class="logo d-flex align-items-center">

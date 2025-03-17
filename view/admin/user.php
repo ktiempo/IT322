@@ -26,12 +26,6 @@ $allUsersResult = $conn->query($allUsersQuery);
 <main id="main" class="main flex-grow-1">
     <div class="pagetitle">
         <h1>User Management</h1>
-        <nav>
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-                <li class="breadcrumb-item active">Users</li>
-            </ol>
-        </nav>
     </div>
 
     <section class="dashboard">
