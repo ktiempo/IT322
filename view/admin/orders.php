@@ -5,257 +5,177 @@ include("./includes/sidebar.php");
 include("../../dB/config.php");
 
 // Fetch cars from inventory
-$queryCars = "SELECT id, car_name FROM inventory";
-$resultCars = mysqli_query($conn, $queryCars);
+$inventoryQuery = "SELECT id, car_name, series, year_release, stock_quantity, price FROM inventory WHERE stock_quantity > 0";
+$inventoryResult = $conn->query($inventoryQuery);
 
-// Fetch all pending orders
-$queryPending = "
-SELECT o.*, i.car_name
-FROM orders o
-JOIN inventory i ON o.item_id = i.id
-WHERE o.status != 'Completed'
+// Fetch pending orders
+$orderQuery = "
+    SELECT o.order_id, o.customer_name, i.car_name, i.series, i.year_release, 
+           o.quantity, o.total_price, o.status, o.created_at 
+    FROM orders o 
+    JOIN inventory i ON o.item_id = i.id 
+    WHERE o.status = 'Pending'
+    ORDER BY o.created_at DESC
 ";
-$resultPending = mysqli_query($conn, $queryPending);
-
-// Fetch all completed orders
-$queryCompleted = "
-SELECT o.*, i.car_name
-FROM orders o
-JOIN inventory i ON o.item_id = i.id
-WHERE o.status = 'Completed'
-";
-$resultCompleted = mysqli_query($conn, $queryCompleted);
-
-// Handle order completion
-if (isset($_POST['complete_order'])) {
-    $order_id = $_POST['order_id'];
-
-    // First, get the order details
-    $orderQuery = "SELECT * FROM orders WHERE order_id = '$order_id'";
-    $orderResult = mysqli_query($conn, $orderQuery);
-    $order = mysqli_fetch_assoc($orderResult);
-
-    $item_id = $order['item_id'];
-    $quantity = $order['quantity'];
-
-    // Now, update the inventory by deducting the quantity from stock
-    $inventoryQuery = "UPDATE inventory SET stock_quantity = stock_quantity - '$quantity' WHERE id = '$item_id'";
-    if (mysqli_query($conn, $inventoryQuery)) {
-        // Update the order status to "Completed" and set the completion date
-        $completionDate = date('Y-m-d H:i:s');
-        $updateOrderQuery = "UPDATE orders SET status = 'Completed', completed_at = '$completionDate' WHERE order_id = '$order_id'";
-        if (mysqli_query($conn, $updateOrderQuery)) {
-            echo "<script>alert('Order marked as completed and inventory updated.'); window.location.href = 'orders.php';</script>";
-        } else {
-            echo "<script>alert('Failed to update order status.');</script>";
-        }
-    } else {
-        echo "<script>alert('Failed to update inventory.');</script>";
-    }
-}
-
-// Handle order deletion
-if (isset($_POST['delete_order'])) {
-    $order_id = $_POST['order_id'];
-
-    // Delete the order
-    $deleteOrderQuery = "DELETE FROM orders WHERE order_id = '$order_id'";
-    if (mysqli_query($conn, $deleteOrderQuery)) {
-        echo "<script>alert('Order deleted successfully.'); window.location.href = 'orders.php';</script>";
-    } else {
-        echo "<script>alert('Failed to delete order.');</script>";
-    }
-}
+$orderResult = $conn->query($orderQuery);
 ?>
 
-<main id="main" class="main flex-grow-1 p-5">
-    <div class="pagetitle text-center mb-4">
-        <h1 class="fw-bold text-primary">Order List</h1>
-    </div>
+<main id="main" class="main flex-grow-1">
+    <section class="container mt-4">
+        <!-- Add Order Form -->
+        <div class="card p-4 shadow mb-4">
+            <h3 class="mb-3 text-center">New Order</h3>
+            <form id="orderForm">
+                <div class="d-flex align-items-center flex-wrap gap-3">
+                    <!-- Customer Name -->
+                    <label for="customer_name" class="form-label mb-0">Customer Name:</label>
+                    <input type="text" class="form-control w-auto" id="customer_name" name="customer_name">
+                    <div id="customerError" class="text-danger mt-1" style="display: none;">Required!</div>
 
-    <!-- Add Order Button (Trigger Modal) -->
-    <div class="d-flex justify-content-end mb-4">
-        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addOrderModal">Add Order</button>
-    </div>
+                    <!-- Select Car -->
+                    <label for="car" class="form-label mb-0">Select Car:</label>
+                    <select class="form-select w-auto" id="car" name="car_id" required onchange="updateStockAndPrice()">
+                        <option value="" data-stock="0" data-price="0">Choose a car</option>
+                        <?php while ($row = $inventoryResult->fetch_assoc()): ?>
+                            <option value="<?= $row['id']; ?>" 
+                                    data-stock="<?= $row['stock_quantity']; ?>" 
+                                    data-price="<?= $row['price']; ?>">
+                                <?= htmlspecialchars($row['car_name'] . " " . $row['series'] . " (" . $row['year_release'] . ") - ₱" . number_format($row['price'], 2)); ?>
+                            </option>
+                        <?php endwhile; ?>
+                    </select>
+                    <span id="stockLabel" class="badge bg-danger">Stock: 0</span>
 
-    <!-- Pending Orders -->
-    <section class="orders">
-        <h2>Pending Orders</h2>
-        <div class="card shadow-sm p-4 border-0">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-striped table-bordered text-center rounded overflow-hidden">
-                        <thead class="table-primary text-white">
-                            <tr>
-                                <th>Customer Name</th>
-                                <th>Car</th>
-                                <th>Quantity</th>
-                                <th>Total Price</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php while ($row = mysqli_fetch_assoc($resultPending)) : ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($row['customer_name']); ?></td>
-                                    <td><?= htmlspecialchars($row['car_name']); ?></td>
-                                    <td><?= htmlspecialchars($row['quantity']); ?></td>
-                                    <td>₱<?= number_format($row['total_price'], 2); ?></td>
-                                    <td><?= htmlspecialchars($row['status']); ?></td>
-                                    <td class="text-nowrap">
-                                        <button class="btn btn-warning btn-sm me-1 shadow" data-bs-toggle="modal" data-bs-target="#editOrderModal" onclick="populateEditModal(<?= $row['order_id']; ?>, '<?= htmlspecialchars(addslashes($row['customer_name'])); ?>', '<?= htmlspecialchars(addslashes($row['car_name'])); ?>', '<?= $row['quantity']; ?>', '<?= $row['total_price']; ?>', '<?= $row['status']; ?>')">Edit</button>
-                                        <!-- Delete Button -->
-                                        <form method="POST" style="display:inline;">
-                                            <input type="hidden" name="order_id" value="<?= $row['order_id']; ?>">
-                                            <button type="submit" name="delete_order" class="btn btn-danger btn-sm shadow">Delete</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            <?php endwhile; ?>
-                        </tbody>
-                    </table>
+                    <!-- Quantity -->
+                    <label for="quantity" class="form-label mb-0">Quantity:</label>
+                    <input type="number" class="form-control w-auto" id="quantity" name="quantity" min="1" oninput="validateQuantity()">
+
+                    <!-- Total Price -->
+                    <label class="form-label mb-0">Total Price:</label>
+                    <input type="text" class="form-control w-auto" id="totalPrice" name="total_price" readonly>
+
+                    <!-- Submit Button -->
+                    <button type="button" class="btn btn-primary" onclick="submitOrder()">Add Order</button>
                 </div>
-            </div>
+            </form>
         </div>
-    </section>
 
-    <!-- Completed Orders (Green Table) -->
-    <section class="orders mt-5">
-        <h2>Completed Orders</h2>
-        <div class="card shadow-sm p-4 border-0">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-striped table-bordered text-center rounded overflow-hidden" style="background-color: #d4edda;">
-                        <thead class="table-success text-white">
-                            <tr>
-                                <th>Customer Name</th>
-                                <th>Car</th>
-                                <th>Quantity</th>
-                                <th>Total Price</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php while ($row = mysqli_fetch_assoc($resultCompleted)) : ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($row['customer_name']); ?></td>
-                                    <td><?= htmlspecialchars($row['car_name']); ?></td>
-                                    <td><?= htmlspecialchars($row['quantity']); ?></td>
-                                    <td>₱<?= number_format($row['total_price'], 2); ?></td>
-                                    <td><?= htmlspecialchars($row['status']); ?></td>
-                                </tr>
-                            <?php endwhile; ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+        <!-- Pending Orders Table -->
+        <div class="card p-4 shadow">
+            <h3 class="mb-3 text-center">Pending Orders</h3>
+            <table class="table table-bordered">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Customer Name</th>
+                        <th>Car</th>
+                        <th>Quantity</th>
+                        <th>Total Price</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php while ($row = $orderResult->fetch_assoc()): ?>
+                        <tr class="<?= ($row['order_id'] % 2 == 0) ? 'table-light' : 'table-primary'; ?>">
+                            <td><?= htmlspecialchars($row['customer_name']); ?></td>
+                            <td><?= htmlspecialchars($row['car_name'] . " " . $row['series'] . " (" . $row['year_release'] . ")"); ?></td>
+                            <td><?= $row['quantity']; ?></td>
+                            <td>₱<?= isset($row['total_price']) ? number_format($row['total_price'], 2) : '0.00'; ?></td>
+                            <td>
+                                <span class="badge 
+                                    <?= ($row['status'] == 'Pending') ? 'bg-warning text-dark' : 'bg-info'; ?>">
+                                    <?= $row['status']; ?>
+                                </span>
+                            </td>
+                            <td>
+                                <a href="complete_order.php?id=<?= $row['order_id']; ?>" class="btn btn-success btn-sm">Complete</a>
+                                <a href="cancel_order.php?id=<?= $row['order_id']; ?>" class="btn btn-danger btn-sm">Cancel</a>
+                            </td>
+                        </tr>
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
         </div>
     </section>
 </main>
 
-<!-- Add Order Modal -->
-<div class="modal fade" id="addOrderModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Add Order</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form id="addOrderForm" method="POST" action="add_order.php">
-                    <div class="mb-3">
-                        <label class="form-label">Customer Name</label>
-                        <input type="text" class="form-control" name="customer_name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Car</label>
-                        <select class="form-select" name="car_id" required>
-                            <option value="" disabled selected>Select Car</option>
-                            <?php while ($car = mysqli_fetch_assoc($resultCars)) : ?>
-                                <option value="<?= $car['id']; ?>"><?= htmlspecialchars($car['car_name']); ?></option>
-                            <?php endwhile; ?>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Quantity</label>
-                        <input type="number" class="form-control" name="quantity" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Total Price</label>
-                        <input type="number" class="form-control" name="total_price" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Add Order</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Edit Order Modal -->
-<div class="modal fade" id="editOrderModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Edit Order</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form id="editOrderForm" method="POST" action="../../view/admin/update_order.php">
-                    <input type="hidden" name="order_id" id="editOrderId">
-                    <div class="mb-3">
-                        <label class="form-label">Customer Name</label>
-                        <input type="text" class="form-control" name="customer_name" id="edit_customer_name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Car</label>
-                        <select class="form-select" name="car_id" id="edit_car_id" required>
-                            <option value="" disabled selected>Select Car</option>
-                            <?php
-                            mysqli_data_seek($resultCars, 0); // Reset the result set pointer
-                            while ($car = mysqli_fetch_assoc($resultCars)) : ?>
-                                <option value="<?= $car['id']; ?>"><?= htmlspecialchars($car['car_name']); ?></option>
-                            <?php endwhile; ?>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Quantity</label>
-                        <input type="number" class="form-control" name="quantity" id="edit_quantity" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Total Price</label>
-                        <input type="number" class="form-control" name="total_price" id="edit_total_price" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Status</label>
-                        <select class="form-select" name="status" id="edit_status" required>
-                            <option value="Pending">Pending</option>
-                            <option value="Completed">Completed</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-success mt-2">Save Changes</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-function populateEditModal(id, customer_name, car_name, quantity, total_price, status) {
-    document.getElementById('editOrderId').value = id;
-    document.getElementById('edit_customer_name').value = customer_name;
-    document.getElementById('edit_quantity').value = quantity;
-    document.getElementById('edit_total_price').value = total_price;
-    document.getElementById('edit_status').value = status;
+function updateStockAndPrice() {
+    let carSelect = document.getElementById("car");
+    let stockLabel = document.getElementById("stockLabel");
+    let stock = carSelect.options[carSelect.selectedIndex].getAttribute("data-stock");
+    let price = carSelect.options[carSelect.selectedIndex].getAttribute("data-price");
 
-    // Set the car_id dropdown value
-    let carDropdown = document.getElementById('edit_car_id');
-    for (let i = 0; i < carDropdown.options.length; i++) {
-        if (carDropdown.options[i].text === car_name) {
-            carDropdown.selectedIndex = i;
-            break;
-        }
+    stockLabel.textContent = "Stock: " + stock; 
+    stockLabel.className = "badge " + (parseInt(stock) > 5 ? "bg-success" : "bg-danger");
+
+    document.getElementById("quantity").value = "";
+    document.getElementById("totalPrice").value = "";
+}
+
+function validateQuantity() {
+    let carSelect = document.getElementById("car");
+    let stock = parseInt(carSelect.options[carSelect.selectedIndex].getAttribute("data-stock"));
+    let price = parseFloat(carSelect.options[carSelect.selectedIndex].getAttribute("data-price"));
+    let quantityInput = document.getElementById("quantity");
+    let totalPriceInput = document.getElementById("totalPrice");
+
+    let quantity = parseInt(quantityInput.value);
+    
+    if (quantity > stock) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Not enough stock!',
+            text: `Only ${stock} available.`,
+        });
+        quantityInput.value = stock;
     }
+
+    if (!isNaN(quantity) && quantity > 0) {
+        totalPriceInput.value = "₱" + (quantity * price).toFixed(2);
+    } else {
+        totalPriceInput.value = "";
+    }
+}
+
+function submitOrder() {
+    let customerName = document.getElementById("customer_name");
+    let errorDiv = document.getElementById("customerError");
+
+    if (customerName.value.trim() === "") {
+        customerName.classList.add("is-invalid");
+        errorDiv.style.display = "block";
+        return false;
+    } else {
+        customerName.classList.remove("is-invalid");
+        errorDiv.style.display = "none";
+    }
+
+    let formData = new FormData(document.getElementById("orderForm"));
+    fetch('process_order.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.text())
+    .then(() => {
+        Swal.fire({
+            icon: 'success',
+            title: 'Order Placed!',
+            text: 'Your order has been successfully added.',
+            confirmButtonText: 'OK'
+        }).then(() => {
+            document.getElementById("orderForm").reset();
+            document.getElementById("stockLabel").textContent = "Stock: 0";
+            document.getElementById("stockLabel").className = "badge bg-danger";
+            document.getElementById("totalPrice").value = "";
+            location.reload();
+        });
+    })
+    .catch(error => console.error('Error:', error));
+
+    return false;
 }
 </script>
 
